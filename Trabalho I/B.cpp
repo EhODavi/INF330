@@ -3,36 +3,30 @@
 
 using namespace std;
 
-void imprime(vector<vector<int>> &matriz, int i) {
+void insereColar(vector<vector<int>> &matriz, vector<pair<int,int>> &colar, int i) {
     for(int j = 1; j <= 50; j++) {
         if(matriz[i][j] != 0) {
             matriz[i][j]--;
             matriz[j][i]--;
 
-            imprime(matriz,j);
+            insereColar(matriz,colar,j);
 
-            cout << j << " " << i << "\n";
+            colar.push_back(make_pair(j,i));
         }
     }
 }
 
-bool circuitoEuleriano(const vector<vector<int>> &matriz) {
+bool podeSerEuleriano(const vector<vector<int>> &matriz) {
     int grau;
-    bool linhaLoop;
 
     for(int i = 1; i <= 50; i++) {
-        linhaLoop = true;
         grau = 0;
 
         for(int j = 1; j <= 50; j++) {
-            if(matriz[i][j] != 0 && i != j) linhaLoop = false;
-
             grau += matriz[i][j];
         }
-
-        linhaLoop = linhaLoop && (matriz[i][i] != 0);
-
-        if(grau % 2 != 0 || linhaLoop) return false;
+        
+        if(grau % 2 != 0) return false;
     }
 
     return true;
@@ -51,9 +45,30 @@ void colar() {
         matriz[cor2][cor1]++;
     }
 
-    if(circuitoEuleriano(matriz)) {
+    if(podeSerEuleriano(matriz)) {
+        vector<pair<int,int>> colar;
+        
         for(int i = 1; i <= 50; i++) {
-            imprime(matriz,i);
+            insereColar(matriz,colar,i);
+        }
+        
+        bool ehColar = true;
+        
+        for(int i = 0; i < colar.size() - 1; i++) {
+            if(colar[i].second != colar[i + 1].first) {
+                ehColar = false;
+                break;
+            }
+        }
+
+        if(colar[0].first != colar[colar.size() - 1].second) ehColar = false;
+
+        if(ehColar) {
+            for(int i = 0; i < colar.size(); i++) {
+                cout << colar[i].first << " " << colar[i].second << "\n";
+            }
+        } else {
+            cout << "some beads may be lost\n";
         }
     } else {
         cout << "some beads may be lost\n";
