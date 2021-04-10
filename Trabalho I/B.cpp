@@ -3,33 +3,43 @@
 
 using namespace std;
 
-void imprime(vector<vector<int>> &matriz) {
+void imprime(vector<vector<int>> &matriz, int i) {
+    for(int j = 1; j <= 50; j++) {
+        if(matriz[i][j] != 0) {
+            matriz[i][j]--;
+            matriz[j][i]--;
 
+            imprime(matriz,j);
+
+            cout << j << " " << i << "\n";
+        }
+    }
 }
 
-bool euleriano(const vector<vector<int>> &matriz) {
-    bool linhaVazia, linhaComApenasLoop;
+bool circuitoEuleriano(const vector<vector<int>> &matriz) {
     int grau;
+    bool linhaLoop;
 
-    for(int i = 0; i < 50; i++) {
-        linhaVazia = linhaComApenasLoop = true;
+    for(int i = 1; i <= 50; i++) {
+        linhaLoop = true;
         grau = 0;
 
-        for(int j = 0; j < 50; j++) {
-            if(matriz[i][j] != 0) linhaVazia = false;
-            if(matriz[i][j] == 1) linhaVazia = linhaComApenasLoop = false;
-            
+        for(int j = 1; j <= 50; j++) {
+            if(matriz[i][j] != 0 && i != j) linhaLoop = false;
+
             grau += matriz[i][j];
         }
 
-        if(grau % 2 != 0 || linhaVazia || linhaComApenasLoop) return false;
+        linhaLoop = linhaLoop && (matriz[i][i] != 0);
+
+        if(grau % 2 != 0 || linhaLoop) return false;
     }
 
     return true;
 }
 
 void colar() {
-    vector<vector<int>> matriz(50, vector<int>(50, 0));
+    vector<vector<int>> matriz(51, vector<int>(51, 0));
     int N, cor1, cor2;
     
     cin >> N;
@@ -37,15 +47,14 @@ void colar() {
     for(int i = 0; i < N; i++) {
         cin >> cor1 >> cor2;
 
-        if(cor1 == cor2) matriz[cor1 - 1][cor2 - 1] += 2;
-        else {
-            matriz[cor1 - 1][cor2 - 1]++;
-            matriz[cor2 - 1][cor1 - 1]++;
-        }
+        matriz[cor1][cor2]++;
+        matriz[cor2][cor1]++;
     }
 
-    if(euleriano(matriz)) {
-        imprime(matriz);
+    if(circuitoEuleriano(matriz)) {
+        for(int i = 1; i <= 50; i++) {
+            imprime(matriz,i);
+        }
     } else {
         cout << "some beads may be lost\n";
     }
