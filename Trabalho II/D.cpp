@@ -1,30 +1,38 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
-/*
-Sample Input
-8 4
-0 4
-1 2
-2 3
-2 4
-3 5
-3 6
-3 7
-6 7
--1 -1
-0 0
-Sample Output
-2 3
-3 3
-4 2
-0 1
-*/
+void tarjan(int u, const vector<vector<int>> &listaAdjacencia, vector<int> &dfsPai, vector<int> &dfsNum, vector<int> &dfsLow, vector<int> &numPombo, int &dfsContador) {
+    dfsLow[u] = dfsNum[u] = ++dfsContador;
 
-void solve(int m, int n) {
-    vector<vector<int>> listaAdjacencia(m);
+    for(int v:listaAdjacencia[u]) {
+        if(dfsNum[v] == 0) {
+            dfsPai[v] = u;
+
+            tarjan(v,listaAdjacencia,dfsPai,dfsNum,dfsLow,numPombo,dfsContador);
+
+            if(dfsLow[v] > dfsNum[u]) {
+                numPombo[u]++;
+                numPombo[v]++;
+            }
+
+            dfsLow[u] = min(dfsLow[u],dfsLow[v]);
+        } else if(v != dfsPai[u]) dfsLow[u] = min(dfsLow[u],dfsNum[v]);
+    }
+}
+
+void tarjan(const vector<vector<int>> &listaAdjacencia,vector<int> &numPombo) {
+    int n = listaAdjacencia.size();
+    vector<int> dfsPai(n,-1), dfsLow(n,0), dfsNum(n,0);
+    int dfsContador = 0;
+
+    tarjan(0,listaAdjacencia,dfsPai,dfsNum,dfsLow,numPombo,dfsContador);  
+}
+
+void solve(int n, int m) {
+    vector<vector<int>> listaAdjacencia(n);
     int x,y;
 
     while(cin >> x >> y) {
@@ -33,34 +41,41 @@ void solve(int m, int n) {
         listaAdjacencia[x].push_back(y);
         listaAdjacencia[y].push_back(x);
     }
+
+    vector<int> numPombo(n,0);
+    
+    tarjan(listaAdjacencia,numPombo);
+
+    for(int i = 0; i < n; i++) {
+        if(numPombo[i] != listaAdjacencia[i].size()) {
+            numPombo[i]++;
+        }
+    }
+
+    vector<pair<int,int>> verticesQtdPombos(n);
+
+    for(int i = 0; i < n; i++) {
+        verticesQtdPombos[i].first = -numPombo[i];
+        verticesQtdPombos[i].second = i;
+    }
+
+    sort(verticesQtdPombos.begin(),verticesQtdPombos.end());
+
+    for(int i = 0; i < m; i++) {
+        cout << verticesQtdPombos[i].second << " " << -verticesQtdPombos[i].first << "\n";
+    }
 }
 
 
 int main() {
-    // grau = 10 (de cada estação ferroviária)
-    // grafo bidirecional
-    // grafo conexo
-    // Bombardear estações (vértices)
-    // Bombardear apenas um vértice (alvo)
-    // Determinar os melhores vértice para bombardear com base no "valor pombo"
-    // Valor pombo é o numero minimo de pombos que o inimigo devera lançar (componentes conexos)
-    // Vários casos de teste
-    // Cada caso de teste começa com uma linha contendo dois inteiros
-    // n = número de vértices (são numeradas de 0 a n - 1)
-    // m = número de estações a serem determinadas como alvos
-    // As proximas linhas serao x y (aresta de x a y)
-    // Termina quando há -1 -1
-    // n = m = 0 termina o programa
-    // Informar quais estações são as melhores para bombardear (m linhas, cada uma com dois inteiros). O primeiro inteiro será o número da estação e o segundo será o valor pombo (numero de componentes conexos)
-    // Valor pombo em ordem decrescente, numero de estações em ordem crescente
-    // Imprimir uma linha em branco após a saída para cada conjunto de entrada
+    int n,m;
 
-    int m,n;
+    while(cin >> n >> m) {
+        if(n == 0 && m == 0) break;
 
-    while(cin >> m >> n) {
-        if(m == 0 && n == 0) break;
+        solve(n,m);
 
-        solve(m,n);
+        cout << "\n";
     }
 
     return 0;
