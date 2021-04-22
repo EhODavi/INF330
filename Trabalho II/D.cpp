@@ -13,6 +13,7 @@ void tarjan(int u, const vector<vector<int>> &listaAdjacencia, vector<int> &dfsP
 
             tarjan(v,listaAdjacencia,dfsPai,dfsNum,dfsLow,numPombo,dfsContador);
 
+            // Se a aresta for uma ponte, incrementamos a quantidade de pombos necessários do vértice u e v em 1
             if(dfsLow[v] > dfsNum[u]) {
                 numPombo[u]++;
                 numPombo[v]++;
@@ -23,7 +24,7 @@ void tarjan(int u, const vector<vector<int>> &listaAdjacencia, vector<int> &dfsP
     }
 }
 
-void tarjan(const vector<vector<int>> &listaAdjacencia,vector<int> &numPombo) {
+void tarjan(const vector<vector<int>> &listaAdjacencia, vector<int> &numPombo) {
     int n = listaAdjacencia.size();
     vector<int> dfsPai(n,-1), dfsLow(n,0), dfsNum(n,0);
     int dfsContador = 0;
@@ -42,20 +43,21 @@ void solve(int n, int m) {
         listaAdjacencia[y].push_back(x);
     }
 
-    vector<int> numPombo(n,0);
+    vector<int> numPombo(n,0); // Criando um vetor que indica quantos pombos serão necessários caso o vértice seja bombardeado
     
     tarjan(listaAdjacencia,numPombo);
 
+    // Caso algum vertice possua arestas que não são pontes, incrementamos a quantidade de pombos em 1
     for(int i = 0; i < n; i++) {
         if(numPombo[i] != listaAdjacencia[i].size()) {
             numPombo[i]++;
         }
     }
 
-    vector<pair<int,int>> verticesQtdPombos(n);
+    vector<pair<int,int>> verticesQtdPombos(n); // Criando um vetor de pair que indica quantos pombos serão necessários para cada vértice
 
     for(int i = 0; i < n; i++) {
-        verticesQtdPombos[i].first = -numPombo[i];
+        verticesQtdPombos[i].first = -numPombo[i]; // Armazenando negativo para ser ordenado de maneira decrescente
         verticesQtdPombos[i].second = i;
     }
 

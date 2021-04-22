@@ -3,9 +3,12 @@
 
 using namespace std;
 
+// Função que verifica se será possível proteger as ovelhas e ainda coloca a posição dos cachorros
 bool protect(vector<vector<char>> &field) {
+    // Varrendo toda a matriz para colocar os cachorros
     for(int i = 0; i < field.size(); i++) {
         for(int j = 0; j < field[i].size(); j++) {
+            // Se identificarmos uma ovelha, tentaremos colocar os cachorros. Se em uma das 4 posições tiver um lobo, não será possível proteger as ovelhas
             if(field[i][j] == 'S') {
                 if(i != field.size() - 1) {
                     if(field[i + 1][j] == 'W') return false;
@@ -30,6 +33,7 @@ bool protect(vector<vector<char>> &field) {
         }
     }
 
+    // Se conseguirmos colocar os cachorros para proteger todas as ovelhas, será possivel protege-las
     return true;
 }
 

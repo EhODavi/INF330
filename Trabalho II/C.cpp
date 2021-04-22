@@ -16,29 +16,34 @@ int bfs(vector<vector<char>> &map) {
     }
 
     while(true) {
-        if(joe.empty()) return -1;
+        if(joe.empty()) return -1; // Se a fila de Joe esvaziar, quer dizer que ele não conseguiu sair do labirinto
 
         int tamanhoFogo = fogo.size();
 
+        // Alastrando o fogo
         for(int i = 0; i < tamanhoFogo; i++) {
             pair<int,int> posicao = fogo.front();
             fogo.pop();
 
+            // Verificando se o fogo pode "andar"
             if(map[posicao.first + 1][posicao.second] == '.' || map[posicao.first + 1][posicao.second] == 'J') {
                 fogo.push(make_pair(posicao.first + 1,posicao.second));
                 map[posicao.first + 1][posicao.second] = 'F';
             }
             
+            // Verificando se o fogo pode "andar"
             if(map[posicao.first - 1][posicao.second] == '.' || map[posicao.first - 1][posicao.second] == 'J') {
                 fogo.push(make_pair(posicao.first - 1,posicao.second));
                 map[posicao.first - 1][posicao.second] = 'F';
             }
             
+            // Verificando se o fogo pode "andar"
             if(map[posicao.first][posicao.second + 1] == '.' || map[posicao.first][posicao.second + 1] == 'J') {
                 fogo.push(make_pair(posicao.first,posicao.second + 1));
                 map[posicao.first][posicao.second + 1] = 'F';
             }
             
+            // Verificando se o fogo pode "andar"
             if(map[posicao.first][posicao.second - 1] == '.' || map[posicao.first][posicao.second - 1] == 'J') {
                 fogo.push(make_pair(posicao.first,posicao.second - 1));
                 map[posicao.first][posicao.second -1] = 'F';
@@ -47,10 +52,12 @@ int bfs(vector<vector<char>> &map) {
 
         int tamanhoJoe = joe.size();
         
+        // Andando com o Joe
         for(int i = 0; i < tamanhoJoe; i++) {
             pair<int,int> posicao = joe.front();
             joe.pop();
-
+            
+            // Verificando se o Joe pode "andar". Se ele chegar na saída, retornamos em quantos passos ele saiu
             if(map[posicao.first + 1][posicao.second] == '.' || map[posicao.first + 1][posicao.second] == 'E') {
                 if(map[posicao.first + 1][posicao.second] == 'E') return qtdJoe + 1;
                 
@@ -58,6 +65,7 @@ int bfs(vector<vector<char>> &map) {
                 map[posicao.first + 1][posicao.second] = 'J';
             }
             
+            // Verificando se o Joe pode "andar". Se ele chegar na saída, retornamos em quantos passos ele saiu
             if(map[posicao.first - 1][posicao.second] == '.' || map[posicao.first - 1][posicao.second] == 'E') {
                 if(map[posicao.first - 1][posicao.second] == 'E') return qtdJoe + 1;
                 
@@ -65,6 +73,7 @@ int bfs(vector<vector<char>> &map) {
                 map[posicao.first - 1][posicao.second] = 'J';
             }
             
+            // Verificando se o Joe pode "andar". Se ele chegar na saída, retornamos em quantos passos ele saiu
             if(map[posicao.first][posicao.second + 1] == '.' || map[posicao.first][posicao.second + 1] == 'E') {
                 if(map[posicao.first][posicao.second + 1] == 'E') return qtdJoe + 1;
                 
@@ -72,6 +81,7 @@ int bfs(vector<vector<char>> &map) {
                 map[posicao.first][posicao.second + 1] = 'J';
             }
             
+            // Verificando se o Joe pode "andar". Se ele chegar na saída, retornamos em quantos passos ele saiu
             if(map[posicao.first][posicao.second - 1] == '.' || map[posicao.first][posicao.second - 1] == 'E') {
                 if(map[posicao.first][posicao.second - 1] == 'E') return qtdJoe + 1;
                 
@@ -87,12 +97,12 @@ int bfs(vector<vector<char>> &map) {
 }
 
 void solve() {
-    int R, C, qtdJoe;
+    int R, C, qtdJoe; // qtdJoe indica quantos passos o Joe precisou para sair do labirinto
     string line;
 
     cin >> R >> C;
 
-    vector<vector<char>> map(R + 2,vector<char>(C + 2,'E'));
+    vector<vector<char>> map(R + 2,vector<char>(C + 2,'E')); // A matriz tem 2 linhas e 2 colunas a mais. Preenchi com 'E' que significa saída. Ou seja, se o Joe chegar em um E, ele saiu do labirinto
 
     for(int i = 1; i <= R; i++) {
         cin >> line;
