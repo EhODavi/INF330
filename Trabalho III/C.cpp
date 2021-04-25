@@ -4,11 +4,12 @@
 
 using namespace std;
 
-int bfs(const vector<vector<int>> &primosAteMil, int s, int t) {
+int bfs(const vector<vector<int>> &primosAteMil, int s, int t, vector<bool> &visitado) {
     queue<int> numeros;
     int qtd = 0, tamanhoNumeros, numero;
 
     numeros.push(s);
+    visitado[s] = true;
 
     while(!numeros.empty()) {
         tamanhoNumeros = numeros.size();
@@ -17,11 +18,12 @@ int bfs(const vector<vector<int>> &primosAteMil, int s, int t) {
             numero = numeros.front();
             numeros.pop();
 
-            int j = 0;
-
-            for(int j = 0; j < primosAteMil[numero].size(); j++) {
+            for(int j = primosAteMil[numero].size() - 1; j >= 0; j--) {
                 if(numero + primosAteMil[numero][j] == t) return qtd + 1;
-                else if(numero + primosAteMil[numero][j] < t) numeros.push(numero + primosAteMil[numero][j]);
+                else if(numero + primosAteMil[numero][j] < t && !visitado[numero + primosAteMil[numero][j]]) {
+                    visitado[numero + primosAteMil[numero][j]] = true;
+                    numeros.push(numero + primosAteMil[numero][j]); 
+                }
             }
         }
         
@@ -32,13 +34,14 @@ int bfs(const vector<vector<int>> &primosAteMil, int s, int t) {
 }
 
 void solve(const vector<vector<int>> &primosAteMil) {
+    vector<bool> visitado(1001,false);
     int s, t, qtd;
 
     cin >> s >> t;
 
     if(s == t) qtd = 0;
     else if(s > t) qtd = -1;
-    else qtd = bfs(primosAteMil,s,t);
+    else qtd = bfs(primosAteMil,s,t,visitado);
 
     cout << qtd;
 }
