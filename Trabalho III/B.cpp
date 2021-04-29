@@ -71,14 +71,14 @@ void solve() {
             a1 += S;
             a2 += S;
 
-            if(s1 == s2 && a1 < a2) { // verificar
-                cidade.addImplicacao(s1, false, s2, true);
-            } else if(s1 == s2 && a1 > a2) { // verificar
-                cidade.addImplicacao(s1, true, s2, false);
-            } else if(a1 == a2 && s1 < s2) { // verificar
-                cidade.addImplicacao(a1, true, a2, false);
-            } else if(a1 == a2 && s1 > s2) { // verificar
-                cidade.addImplicacao(a1, false, a2, true);
+            if(s1 == s2 && a1 < a2) {
+                cidade.addImplicacao(s1, false, s1, true);
+            } else if(s1 == s2 && a1 > a2) {
+                cidade.addImplicacao(s1, true, s1, false);
+            } else if(a1 == a2 && s1 < s2) {
+                cidade.addImplicacao(a1, false, a1, true);
+            } else if(a1 == a2 && s1 > s2) {
+                cidade.addImplicacao(a1, true, a1, false);
             } else if(s1 < s2 && a1 < a2) {
                 cidade.addImplicacao(s1, false, a1, true);
                 cidade.addImplicacao(s1, false, s2, true);
