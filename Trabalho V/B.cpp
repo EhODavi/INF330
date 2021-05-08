@@ -1,55 +1,53 @@
 #include <iostream>
 #include <vector>
-#include <set>
 
 using namespace std;
 
-long long int dijkstra(vector<vector<pair<int, long long int>>> &listaAdjacencia, int S, int T, int N) {
-    set<pair<long long int, int>> heap;
-    vector<long long int> custo(N, 10987654321);
-    vector<int> pai(N, -1);
+struct Vertice {
+    int pai, nivel;
+    long long int peso;
+};
 
-    custo[S] = 0;
-    pai[S] = S;
+long long int ancestralMaisBaixo(vector<Vertice> &pais, int S, int T) {
+    long long int somaS1 = 0, somaT1 = 0;
+    int S1 = S, T1 = T;
 
-    heap.insert(make_pair(custo[S],S));
-
-    while(!heap.empty()) {
-        int v = heap.begin()->second;
-
-        if(v == T) return custo[T];
-
-		long long int peso = heap.begin()->first;
-		heap.erase(heap.begin());
-
-        for(int i = 0; i < listaAdjacencia[v].size(); i++) {
-            pair<int, long long int> x = listaAdjacencia[v][i];
-
-            if(custo[x.first] == 10987654321) {
-                custo[x.first] = custo[v] + x.second;
-                heap.insert(make_pair(custo[x.first],x.first));
-                pai[x.first] = v;
-            } else if(custo[v] + x.second < custo[x.first]) {
-                heap.erase(heap.find(make_pair(custo[x.first],x.first)));
-                custo[x.first] = custo[v] + x.second;
-                heap.insert(make_pair(custo[x.first],x.first));
-                pai[x.first] = v;
-            }
+    if(pais[S].nivel > pais[T].nivel) {
+        for(int i = 0; i < (pais[S].nivel - pais[T].nivel); i++) {
+            somaS1 += pais[S1].peso;
+            S1 = pais[S1].pai;
+        }
+    } else {
+        for(int i = 0; i < (pais[T].nivel - pais[S].nivel); i++) {
+            somaT1 += pais[T1].peso;
+            T1 = pais[T1].pai;
         }
     }
 
-    return 0;
+    while(S1 != T1) {
+        somaS1 += pais[S1].peso;
+        somaT1 += pais[T1].peso;
+        S1 = pais[S1].pai;
+        T1 = pais[T1].pai;
+    }
+
+    return somaS1 + somaT1;
 }
 
 void solve(int N) {
-    vector<vector<pair<int, long long int>>> listaAdjacencia(N);
+    vector<Vertice> pais(N);
     int Ai, Li, Q, S, T;
+
+    pais[0].pai = -1;
+    pais[0].nivel = 0;
+    pais[0].peso = 0;
 
     for(int i = 1; i <= (N - 1); i++) {
         cin >> Ai >> Li;
 
-        listaAdjacencia[i].push_back(make_pair(Ai, Li));
-        listaAdjacencia[Ai].push_back(make_pair(i, Li));
+        pais[i].pai = Ai;
+        pais[i].nivel = pais[Ai].nivel + 1;
+        pais[i].peso = Li;
     }
 
     cin >> Q;
@@ -57,8 +55,8 @@ void solve(int N) {
     for(int i = 0; i < Q; i++) {
         cin >> S >> T;
         
-        if(i != Q - 1) cout << dijkstra(listaAdjacencia,S,T,N) << " ";
-        else cout << dijkstra(listaAdjacencia,S,T,N);
+        if(i != Q - 1) cout << ancestralMaisBaixo(pais,S,T) << " ";
+        else cout << ancestralMaisBaixo(pais,S,T);
     }
 
     cout << "\n";
